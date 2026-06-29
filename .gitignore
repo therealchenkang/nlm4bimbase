@@ -1,0 +1,29 @@
+# ===== 敏感信息（绝不提交）=====
+apikey.txt
+*.key
+*.pem
+.env
+.env.*
+
+# ===== Python 缓存 / 编译产物 =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# ===== 运行产物 =====
+output/
+
+# ===== 虚拟环境 =====
+.venv/
+venv/
+env/
+
+# ===== IDE / 编辑器 =====
+.idea/
+.vscode/
+*.swp
+
+# ===== 操作系统 =====
+.DS_Store
+Thumbs.db
