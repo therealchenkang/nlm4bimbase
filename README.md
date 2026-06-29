@@ -47,19 +47,18 @@ export DEEPSEEK_API_KEY="sk-xxxxxxxxxxxxxxxx"
 
 ### 2. 启动工具
 
-在 PowerShell 中进入项目目录：
-
-```powershell
-cd D:\VSCode_workspace\bimbase\nlm4bimbase
-```
-
-运行：
+在终端中进入项目根目录（即 clone 下来的 `nlm4bimbase` 文件夹），然后运行主程序：
 
 ```bash
+cd nlm4bimbase
 python main.py
-# 或在指定的 mamba / conda 环境中运行
-mamba run -n <环境名> python main.py
 ```
+
+> 若使用 conda / mamba 管理环境，先在目标环境中装好 `openai`，再用对应环境运行（conda 用户把 `mamba` 换成 `conda` 即可）：
+>
+> ```bash
+> mamba run -n <环境名> python main.py
+> ```
 
 ### 3. 输入描述
 
