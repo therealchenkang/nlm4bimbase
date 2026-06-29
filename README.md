@@ -1,26 +1,63 @@
 # BIMBase 自然语言建模工具
 
-## 快速开始
+中文建筑描述 → DeepSeek API → 自动生成 pyp3d Python 脚本 → 在 BIMBase 建模软件中运行即可生成 3D 模型。
 
-开始之前应当安装相应的库，例如：openai
+## 环境配置
 
-### 1. 设置 API Key
+- **Python**：3.8+（在 3.12 上测试通过）
+- **必要第三方库**：仅 `openai`（其余 `os / sys / logging / ast / re / json / dataclasses` 均为 Python 标准库，无需安装）
 
-直接写入 `config.py`
+> `pyp3d` 是 BIMBase 软件内置 Python 环境提供的库，**本工具本身不需要安装它**——它只在 BIMBase 中运行生成的脚本时才会被用到。
 
-```python
-DEEPSEEK_API_KEY = "sk-xxxxxxxxxxxxxxxx"
-```
-
-### 2. 启动工具（我用的是mamba发行包，它用法和conda一样）
-
-首先在powershell中进入bimbase\TEST文件夹
-
-```cd /d <项目解压目录>\TEST```
-
-然后运行命令
+安装必要依赖：
 
 ```bash
+pip install openai
+```
+
+或在你自己的 conda / mamba 环境中安装：
+
+```bash
+mamba run -n <环境名> pip install openai
+```
+
+## 快速开始
+
+### 1. 配置 API Key
+
+出于安全考虑，**密钥不要写进代码**。在本项目根目录创建 `apikey.txt`，把你的 DeepSeek API Key 粘贴进去（文件内只放一行 key 即可）：
+
+```
+apikey.txt
+sk-xxxxxxxxxxxxxxxx
+```
+
+`apikey.txt` 已在 `.gitignore` 中，不会随仓库上传。
+
+也支持用环境变量配置（优先级高于 `apikey.txt`）：
+
+```bash
+# PowerShell（临时）
+$env:DEEPSEEK_API_KEY = "sk-xxxxxxxxxxxxxxxx"
+# Linux / macOS
+export DEEPSEEK_API_KEY="sk-xxxxxxxxxxxxxxxx"
+```
+
+> 如何获取 Key：登录 [DeepSeek 开放平台](https://platform.deepseek.com/) → API Keys → 创建。
+
+### 2. 启动工具
+
+在 PowerShell 中进入项目目录：
+
+```powershell
+cd D:\VSCode_workspace\bimbase\nlm4bimbase
+```
+
+运行：
+
+```bash
+python main.py
+# 或在指定的 mamba / conda 环境中运行
 mamba run -n <环境名> python main.py
 ```
 
@@ -58,13 +95,16 @@ mamba run -n <环境名> python main.py
 ## 文件结构
 
 ```
-bimbase/TEST/
-├── config.py              # 配置（API key、模型、路径）
+nlm4bimbase/
+├── .gitignore             # 忽略 apikey.txt / __pycache__ / output 等
+├── apikey.txt             # 本地存放 DeepSeek API Key（已 gitignore，不上传）
+├── config.py              # 配置（模型参数、路径；API Key 经 apikey.txt/环境变量读取）
 ├── main.py                # CLI 交互式入口
 ├── llm_client.py          # DeepSeek API 客户端（思考模式）
 ├── system_prompt.py       # 系统 prompt（pyp3d API 文档 + 建筑模式库）
 ├── code_validator.py      # 代码验证器（语法 + 导入 + 模式检查）
-├── output/                # 自动生成的脚本输出目录
+├── param_extractor.py     # 需求澄清：参数抽取
+├── output/                # 自动生成的脚本输出目录（已 gitignore）
 └── reference/             # 参考脚本（few-shot examples）
     ├── wall.py
     ├── column.py
@@ -73,12 +113,18 @@ bimbase/TEST/
     ├── frame.py
     ├── opening.py
     ├── stairs.py
-    └── foundation.py
+    ├── foundation.py
+    ├── door.py
+    ├── window.py
+    ├── floor.py
+    ├── gable_roof.py
+    ├── hip_roof.py
+    └── house.py
 ```
 
 ## 配置说明
 
-编辑 `config.py` 可调整以下参数：
+`config.py` 中可调整以下参数（API Key 不在此处，见上方「配置 API Key」）：
 
 | 参数 | 默认值 | 说明 |
 |------|--------|------|
